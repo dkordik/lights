@@ -1,0 +1,24 @@
+#!/bin/bash
+ROOT="/Users/dkordik/Documents/code/lights"
+
+DAY_TEMP="5700"
+NIGHT_TEMP="2900"
+
+echo `$ROOT/updateSunrise`
+
+DAY_TIME=`cat $ROOT/.cached_sunrise`
+NIGHT_TIME=`cat $ROOT/.cached_sunset`
+NOW_TIME=`date +%r`
+
+declare -i DAY_VAL
+declare -i NIGHT_VAL
+declare -i NOW_VAL
+DAY_VAL=`date -j -f "%H:%M %p" "$DAY_TIME" "+%H%M" | awk '{printf "%d", $1}'`
+NIGHT_VAL=`date -j -f "%H:%M %p" "$NIGHT_TIME" "+%H%M" | awk '{printf "%d", $1}'`
+NOW_VAL=`date -j -f "%H:%M:%S %p" "$NOW_TIME" "+%H%M" | awk '{printf "%d", $1}'`
+
+if [ $NOW_VAL -gt $DAY_VAL -a $NOW_VAL -lt $NIGHT_VAL ]; then
+	echo `$ROOT/temp "$DAY_TEMP"`
+else
+	echo `$ROOT/temp "$NIGHT_TEMP"`
+fi

@@ -1,0 +1,20 @@
+#!/bin/bash
+#modified from https://gist.github.com/lepht/3073718
+ROOT="/Users/dkordik/Documents/code/lights"
+
+LAST_MODIFIED=`stat -f "%Sm" "$ROOT/.cached_sunrise" | cut -d " " -f 1-2,4`
+TODAY=`date "+%b %d %Y"`
+
+if [ "X$TODAY" == "X$LAST_MODIFIED" ]; then
+	echo "Cache up to date. Ignoring."
+	exit 1
+fi
+
+URL='http://weather.yahooapis.com/forecastrss?w='
+l=2379574 # chicago
+
+echo "Grabbing sunrise info from Yahoo Weather API..."
+export $(curl -s "$URL$l" | perl -ne'while(/(sunrise|sunset)="(.*?)"/g) { print "$1=$2\n" }')
+
+echo "$sunrise AM" > "$ROOT/.cached_sunrise"
+echo "$sunset PM" > "$ROOT/.cached_sunset"
