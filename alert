@@ -1,0 +1,10 @@
+#!/bin/bash
+ROOT="/Users/dkordik/Documents/code/lights"
+source "$ROOT/_api"
+
+function alert {
+	api '{ "alert": "select" }' $1
+}
+
+alert 1
+alert 3

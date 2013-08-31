@@ -1,0 +1,10 @@
+#!/bin/bash
+ROOT="/Users/dkordik/Documents/code/lights"
+source "$ROOT/_api"
+
+function turnOff {
+	api '{ "on": false }' $1
+}
+
+turnOff 1
+turnOff 3

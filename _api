@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function api {
+	APIKEY="newdeveloper"
+	HUB_IP="192.168.2.142"
+
+	JSON=$1
+	LIGHT=$2
+
+	curl -X PUT -d"$JSON" http://$HUB_IP/api/$APIKEY/lights/$LIGHT/state
+}

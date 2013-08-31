@@ -1,0 +1,10 @@
+#!/bin/bash
+ROOT="/Users/dkordik/Documents/code/lights"
+source "$ROOT/_api"
+
+function colorloop {
+	api '{ "effect": "colorloop" }' $1
+}
+
+colorloop 1
+colorloop 3

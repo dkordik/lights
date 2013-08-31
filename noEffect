@@ -1,0 +1,10 @@
+#!/bin/bash
+ROOT="/Users/dkordik/Documents/code/lights"
+source "$ROOT/_api"
+
+function noeffect {
+	api '{ "effect": "none" }' $1
+}
+
+noeffect 1
+noeffect 3
