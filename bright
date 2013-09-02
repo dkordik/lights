@@ -1,0 +1,10 @@
+#!/bin/bash
+ROOT="/Users/dkordik/Documents/code/lights"
+source "$ROOT/_api"
+
+function turnOn {
+	api '{ "bri": 255 }' $1
+}
+
+turnOn 1
+turnOn 3

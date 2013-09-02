@@ -3,3 +3,4 @@ ROOT="/Users/dkordik/Documents/code/lights"
 
 echo `$ROOT/on`
 echo `$ROOT/tempToSun`
+echo `$ROOT/bright`
