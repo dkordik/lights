@@ -14,7 +14,7 @@ function get_now_time {
 
 function get_time_val {
 	TIME=$1
-	SUPPORTS_J=`date -j`
+	SUPPORTS_J=`date -j 2>/dev/null`
 	if [ "X$SUPPORTS_J" == "X" ]; then
 		echo `date -d "$TIME" "+%H%M" | awk '{printf "%d", $1}'`
 	else
