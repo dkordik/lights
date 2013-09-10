@@ -1,0 +1,25 @@
+#!/bin/bash
+ROOT="/Users/dkordik/Documents/code/lights"
+source "$ROOT/_api"
+
+function setTemp {
+	SECONDS=$2
+	declare -i TEMP
+	TEMP=1000000/$3
+	declare -i TIME
+	TIME=$SECONDS*10
+	echo TIME:$TIME
+	api "{ \"ct\": $TEMP, \"transitiontime\": $TIME }" $1
+}
+
+NIGHT_TEMP="2900"
+TRANSITION_TIME="600" #15 minutes
+
+#NOTE: run me 15 minutes before sunset
+
+say "The sun is setting. Transitioning lights."
+
+for LIGHT in 1 2 3 4 5 6
+do
+	setTemp $LIGHT $TRANSITION_TIME $NIGHT_TEMP
+done
