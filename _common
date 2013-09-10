@@ -13,6 +13,35 @@ fi
 DAY_TEMP="5700"
 NIGHT_TEMP="2900"
 
+function get_now_time {
+	DATE=$(date +%r | sed 's/^[ ]//g') #trim whitespace to support diff vers of date cmd
+	echo $(echo $DATE | cut -d ":" -f 1,2) $(echo $DATE | cut -d " " -f 2)
+}
+
+function get_time_val {
+	TIME=$1
+	echo `date -j -f "%H:%M %p" "$TIME" "+%H%M" | awk '{printf "%d", $1}'`
+}
+
+function get_temp_val {
+	declare -i TEMP
+	TEMP=1000000/$1
+	echo $TEMP
+}
+
+echo `$ROOT/updateSunrise`
+
+DAY_TIME=`cat $ROOT/.cached_sunrise`
+NIGHT_TIME=`cat $ROOT/.cached_sunset`
+NOW_TIME=$(get_now_time)
+
+declare -i DAY_VAL
+declare -i NIGHT_VAL
+declare -i NOW_VAL
+DAY_VAL=$(get_time_val "$DAY_TIME")
+NIGHT_VAL=$(get_time_val "$NIGHT_TIME")
+NOW_VAL=$(get_time_val "$NOW_TIME")
+
 function api {
 	APIKEY="newdeveloper"
 	HUB_IP="192.168.2.142"
