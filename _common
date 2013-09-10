@@ -4,12 +4,6 @@ if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 
 LOCAL_LIGHTS="1 3"
 
-SUNRISE_LAST_MODIFIED=`stat -c "%y" "$ROOT/.cached_sunrise" 2>/dev/null | cut -d " " -f 1`
-
-if [ "X$SUNRISE_LAST_MODIFIED" == "X" ]; then
-	SUNRISE_LAST_MODIFIED=`stat -f "%Sm" "$ROOT/.cached_sunrise" | cut -d " " -f 1-2,4`
-fi
-
 DAY_TEMP="5700"
 NIGHT_TEMP="2900"
 
