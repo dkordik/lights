@@ -17,7 +17,7 @@ function get_time_val {
 	SUPPORTS_J=`date -j`
 	if [ "X$SUPPORTS_J" == "X" ]; then
 		echo `date -d "$TIME" "+%H%M" | awk '{printf "%d", $1}'`
-	elif
+	else
 		echo `date -j -f "%H:%M %p" "$TIME" "+%H%M" | awk '{printf "%d", $1}'`
 	fi
 }
