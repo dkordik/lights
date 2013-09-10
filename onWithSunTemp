@@ -1,6 +1,31 @@
 #!/bin/bash
 ROOT="/Users/dkordik/Documents/code/lights"
+source "$ROOT/_api"
 
-echo `$ROOT/on`
-echo `$ROOT/tempToSun`
-echo `$ROOT/bright`
+echo `$ROOT/scheduleSunset`
+echo `$ROOT/updateSunrise`
+
+DAY_TIME=`cat $ROOT/.cached_sunrise`
+NIGHT_TIME=`cat $ROOT/.cached_sunset`
+NOW_TIME=`date +%r`
+
+declare -i DAY_VAL
+declare -i NIGHT_VAL
+declare -i NOW_VAL
+DAY_VAL=`date -j -f "%H:%M %p" "$DAY_TIME" "+%H%M" | awk '{printf "%d", $1}'`
+NIGHT_VAL=`date -j -f "%H:%M %p" "$NIGHT_TIME" "+%H%M" | awk '{printf "%d", $1}'`
+NOW_VAL=`date -j -f "%H:%M:%S %p" "$NOW_TIME" "+%H%M" | awk '{printf "%d", $1}'`
+
+if [ $NOW_VAL -gt $DAY_VAL -a $NOW_VAL -lt $NIGHT_VAL ]; then
+	CURRENT_TEMP=$DAY_TEMP
+else
+	CURRENT_TEMP=$NIGHT_TEMP
+fi
+
+declare -i TEMP
+TEMP=1000000/$CURRENT_TEMP
+
+for LIGHT in $LOCAL_LIGHTS
+do
+	api "{ \"ct\": $TEMP, \"on\": true }" $LIGHT
+done
