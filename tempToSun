@@ -1,5 +1,6 @@
 #!/bin/bash
-ROOT="/Users/dkordik/Documents/code/lights"
+ROOT="$(dirname $(realpath $0))"
+if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 source "$ROOT/_api"
 
 echo `$ROOT/updateSunrise`

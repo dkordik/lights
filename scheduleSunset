@@ -1,5 +1,6 @@
 #!/bin/bash
-ROOT="/Users/dkordik/Documents/code/lights"
+ROOT="$(dirname $(realpath $0))"
+if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 #make sure to run this to enable at daemon for the first time
 # sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist
 
