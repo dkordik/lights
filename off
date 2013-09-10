@@ -6,5 +6,7 @@ function turnOff {
 	api '{ "on": false }' $1
 }
 
-turnOff 1
-turnOff 3
+for LIGHT in $LOCAL_LIGHTS
+do
+	turnOff $LIGHT
+done

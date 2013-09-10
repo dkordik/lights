@@ -6,5 +6,8 @@ function turnOn {
 	api '{ "on": true }' $1
 }
 
-turnOn 1
-turnOn 3
+for LIGHT in $LOCAL_LIGHTS
+do
+	turnOn $LIGHT
+done
+
