@@ -1,8 +1,6 @@
 #!/bin/bash
 ROOT="/Users/dkordik/Documents/code/lights"
-
-DAY_TEMP="5700"
-NIGHT_TEMP="2900"
+source "$ROOT/_api"
 
 echo `$ROOT/updateSunrise`
 
