@@ -2,11 +2,7 @@
 ROOT="/Users/dkordik/Documents/code/lights"
 source "$ROOT/_api"
 
-function turnOff {
-	api '{ "on": false }' $1
-}
-
 for LIGHT in $LOCAL_LIGHTS
 do
-	turnOff $LIGHT
+	api '{ "on": false }' $LIGHT
 done

@@ -2,11 +2,10 @@
 ROOT="/Users/dkordik/Documents/code/lights"
 source "$ROOT/_api"
 
-function setTemp {
-	declare -i TEMP
-	TEMP=1000000/$2
-	api "{ \"ct\": $TEMP }" $1
-}
+declare -i TEMP
+TEMP=1000000/$1
 
-setTemp 1 $1
-setTemp 3 $1
+for LIGHT in $LOCAL_LIGHTS
+do
+	api "{ \"ct\": $TEMP }" $LIGHT
+done

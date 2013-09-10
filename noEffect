@@ -2,9 +2,7 @@
 ROOT="/Users/dkordik/Documents/code/lights"
 source "$ROOT/_api"
 
-function noeffect {
-	api '{ "effect": "none" }' $1
-}
-
-noeffect 1
-noeffect 3
+for LIGHT in $LOCAL_LIGHTS
+do
+	api '{ "effect": "none" }' $LIGHT
+done

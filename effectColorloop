@@ -2,9 +2,7 @@
 ROOT="/Users/dkordik/Documents/code/lights"
 source "$ROOT/_api"
 
-function colorloop {
-	api '{ "effect": "colorloop" }' $1
-}
-
-colorloop 1
-colorloop 3
+for LIGHT in $LOCAL_LIGHTS
+do
+	api '{ "effect": "colorloop" }' $LIGHT
+done
