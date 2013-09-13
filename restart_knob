@@ -2,9 +2,6 @@
 ROOT="$(dirname $(realpath $0))"
 if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 
-PID=`ps aux | grep knob.rb | awk '{ printf $0 }' | cut -d" " -f 7`
+ps ax | grep knob.js | sed 's/^[ ]//g' | cut -d" " -f 1 | parallel --max-procs 1 sudo kill
 
-sudo kill $PID
-
-sudo $ROOT/knob.rb &
-
+sudo $ROOT/knob.js &
