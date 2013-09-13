@@ -76,6 +76,7 @@ var runInOffice = function (command, isGlobal) {
 
 powermate.setBrightness(10);
 
+var darkPowermate = false;
 var buttonHoldTimeoutId;
 powermate.on('buttonDown', function () {
 	LIGHTS.LIVINGROOM.on = !LIGHTS.LIVINGROOM.on;
@@ -85,12 +86,18 @@ powermate.on('buttonDown', function () {
 	clearTimeout(buttonHoldTimeoutId);
 	buttonHoldTimeoutId = setTimeout(function () {
 		//super dark mode
+		darkPowermate = true;
 		runInOffice("sleepDisplay");
 	}, 2000);
 });
 
 powermate.on('buttonUp', function () {
-	powermate.setBrightness(10);
+	if (darkPowermate) {
+		powermate.setBrightness(0);
+		darkPowermate = false;
+	} else {
+		powermate.setBrightness(10);
+	}
 	clearTimeout(buttonHoldTimeoutId);
 });
 
