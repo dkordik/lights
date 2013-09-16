@@ -52,6 +52,7 @@ var getLatestLightStates = function () {
 };
 
 getLatestLightStates(); //populate initial light states
+setInterval(getLatestLightStates, 30000);
 
 var lights = function (which, request) {
 	LIGHTS[which].ids.forEach(function (light) {
