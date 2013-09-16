@@ -49,10 +49,22 @@ var getLatestLightStates = function () {
 			group.bri = lightState.bri;
 		}
 	});
+	if (LIGHTS.LIVINGROOM.on) {
+		powermate.setTrackedBrightness(0);
+	}
 };
 
+powermate.setTrackedBrightness = function (val) {
+	if (val < 0) val = 0;
+	if (val > 255) val = 255;
+	powermate.setBrightness(val);
+	powermate._brightness = val;
+}
+powermate._brightness = 10;
+powermate.setTrackedBrightness(powermate._brightness);
+
 getLatestLightStates(); //populate initial light states
-setInterval(getLatestLightStates, 30000);
+setInterval(getLatestLightStates, 15000);
 
 var lights = function (which, request) {
 	LIGHTS[which].ids.forEach(function (light) {
@@ -74,15 +86,6 @@ var runInOffice = function (command, isGlobal) {
 		}
 	});
 }
-
-powermate.setTrackedBrightness = function (val) {
-	if (val < 0) val = 0;
-	if (val > 255) val = 255;
-	powermate.setBrightness(val);
-	powermate._brightness = val;
-}
-powermate._brightness = 10;
-powermate.setTrackedBrightness(powermate._brightness);
 
 var darkPowermate = false;
 var buttonHoldTimeoutId;
