@@ -101,31 +101,35 @@ powermate.on('buttonDown', function () {
 
 powermate.on('buttonUp', function () {
 	if (darkPowermate) {
-		powermate.setBrightness(0);
+		powermate.setTrackedBrightness(0);
 		darkPowermate = false;
 	} else {
-		powermate.setBrightness(10);
+		powermate.setTrackedBrightness(10);
 	}
 	clearTimeout(buttonHoldTimeoutId);
 });
 
 var turnThrottleId;
 powermate.on('wheelTurn', function (wheelDelta) {
-	LIGHTS.LIVINGROOM.bri += (wheelDelta * 2);
-	if (LIGHTS.LIVINGROOM.bri > 255) {
-		LIGHTS.LIVINGROOM.bri = 255;
-	} else if (LIGHTS.LIVINGROOM.bri < 0) {
-		LIGHTS.LIVINGROOM.bri = 0;
-	}
-	clearTimeout(turnThrottleId);
-	turnThrottleId = setTimeout(function () {
-		lights("LIVINGROOM", { bri: LIGHTS.LIVINGROOM.bri });
-		LIGHTS.KITCHEN.bri = LIGHTS.LIVINGROOM.bri - 75;
-		if (LIGHTS.KITCHEN.bri < 0) {
-			LIGHTS.KITCHEN.bri = 0;
+	if (LIGHTS.LIVINGROOM.on == false) {
+		powermate.setTrackedBrightness(powermate._brightness + (wheelDelta * 2));
+	} else {
+		LIGHTS.LIVINGROOM.bri += (wheelDelta * 2);
+		if (LIGHTS.LIVINGROOM.bri > 255) {
+			LIGHTS.LIVINGROOM.bri = 255;
+		} else if (LIGHTS.LIVINGROOM.bri < 0) {
+			LIGHTS.LIVINGROOM.bri = 0;
 		}
-		lights("KITCHEN", { bri: LIGHTS.KITCHEN.bri });
-	}, 100);
+		clearTimeout(turnThrottleId);
+		turnThrottleId = setTimeout(function () {
+			lights("LIVINGROOM", { bri: LIGHTS.LIVINGROOM.bri });
+			LIGHTS.KITCHEN.bri = LIGHTS.LIVINGROOM.bri - 75;
+			if (LIGHTS.KITCHEN.bri < 0) {
+				LIGHTS.KITCHEN.bri = 0;
+			}
+			lights("KITCHEN", { bri: LIGHTS.KITCHEN.bri });
+		}, 100);
+	}
 });
 
 
