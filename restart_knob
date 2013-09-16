@@ -5,3 +5,5 @@ if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 ps ax | grep knob.js | sed 's/^[ ]//g' | cut -d" " -f 1 | parallel --max-procs 1 sudo kill
 
 sudo $ROOT/knob.js &
+
+exit 0
