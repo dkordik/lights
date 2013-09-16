@@ -75,7 +75,14 @@ var runInOffice = function (command, isGlobal) {
 	});
 }
 
-powermate.setBrightness(10);
+powermate.setTrackedBrightness = function (val) {
+	if (val < 0) val = 0;
+	if (val > 255) val = 255;
+	powermate.setBrightness(val);
+	powermate._brightness = val;
+}
+powermate._brightness = 10;
+powermate.setTrackedBrightness(powermate._brightness);
 
 var darkPowermate = false;
 var buttonHoldTimeoutId;
@@ -83,7 +90,7 @@ powermate.on('buttonDown', function () {
 	LIGHTS.LIVINGROOM.on = !LIGHTS.LIVINGROOM.on;
 	lights("LIVINGROOM", { on: LIGHTS.LIVINGROOM.on });
 	lights("KITCHEN", { on: LIGHTS.LIVINGROOM.on });
-	powermate.setBrightness(100);
+	powermate.setTrackedBrightness(100);
 	clearTimeout(buttonHoldTimeoutId);
 	buttonHoldTimeoutId = setTimeout(function () {
 		//super dark mode
