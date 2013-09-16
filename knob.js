@@ -104,7 +104,11 @@ powermate.on('buttonUp', function () {
 		powermate.setTrackedBrightness(0);
 		darkPowermate = false;
 	} else {
-		powermate.setTrackedBrightness(10);
+		if (LIGHTS.LIVINGROOM.on) {
+			powermate.setTrackedBrightness(0);
+		} else {
+			powermate.setTrackedBrightness(1);
+		}
 	}
 	clearTimeout(buttonHoldTimeoutId);
 });
