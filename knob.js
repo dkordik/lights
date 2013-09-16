@@ -72,13 +72,8 @@ var lights = function (which, request) {
 	});	
 }
 
-var runInOffice = function (command, isGlobal) {
-	var OFFICE_ROOT = "/Users/dkordik/Documents/code/lights";
-	var fullCommand =
-		'ssh dkordik@192.168.2.4 "' 
-		+ (isGlobal ? command : OFFICE_ROOT + '/' + command)
-		+ '"';
-	exec(fullCommand, function (error, stdout, stderr) {
+var sys = function (command) {
+	exec(command, function (error, stdout, stderr) {
 		if (stdout) { console.log('stdout: ' + stdout); }
 		if (stderr) { console.log('stderr: ' + stderr); }
 		if (error !== null) {
@@ -87,12 +82,25 @@ var runInOffice = function (command, isGlobal) {
 	});
 }
 
+var runInOffice = function (command, isGlobal) {
+	var OFFICE_ROOT = "/Users/dkordik/Documents/code/lights";
+	var fullCommand =
+		'ssh dkordik@192.168.2.4 "' 
+		+ (isGlobal ? command : OFFICE_ROOT + '/' + command)
+		+ '"';
+	sys(fullCommand);
+}
+
 var darkPowermate = false;
 var buttonHoldTimeoutId;
 powermate.on('buttonDown', function () {
 	LIGHTS.LIVINGROOM.on = !LIGHTS.LIVINGROOM.on;
-	lights("LIVINGROOM", { on: LIGHTS.LIVINGROOM.on });
-	lights("KITCHEN", { on: LIGHTS.LIVINGROOM.on });
+	if (LIGHTS.LIVINGROOM.on) {
+		sys("./onWithSunTemp"); //re-use sun-temp logic
+	} else {
+		lights("LIVINGROOM", { on: LIGHTS.LIVINGROOM.on });
+		lights("KITCHEN", { on: LIGHTS.LIVINGROOM.on });
+	}
 	powermate.setTrackedBrightness(100);
 	clearTimeout(buttonHoldTimeoutId);
 	buttonHoldTimeoutId = setTimeout(function () {
