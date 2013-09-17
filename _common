@@ -4,6 +4,10 @@ if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 
 source "$ROOT/_localsettings"
 
+if [ "X$LIGHTS" != "X" ]; then
+	LOCAL_LIGHTS="$LIGHTS"
+fi
+
 function get_now_time {
 	DATE=$(date +%r | sed 's/^[ ]//g') #trim whitespace to support diff vers of date cmd
 	echo $(echo $DATE | cut -d ":" -f 1,2) $(echo $DATE | cut -d " " -f 2)
