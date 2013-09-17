@@ -14,16 +14,16 @@ DreamCheeky::BigRedButton.run do
 
   close do
     reset
-    `say -v "Zarvox" -r 80 "Disabling alarm sequence"`
+    $alarm_pid = spawn('ssh', 'dkordik@192.168.2.4', "say -v 'Zarvox' -r 80 'Disabling alarm sequence'")
     $zombie_pid = spawn({"LIGHTS" => LIGHTS}, ['./onWithSunTemp', './onWithSunTemp'])
     $chromecast_pid = spawn(['./chromecast.js', './chromecast.js'])
   end
 
   push do
     reset
-    $alarm_pid = spawn(['./alarm', './alarm'])
-    $zombie_pid = spawn({"LIGHTS" => LIGHTS}, ['./zombies', './zombies'])
     $chromecast_pid = spawn('./chromecast.js', 'YouTube', '5A_CGkVO8cE')
+    $zombie_pid = spawn({"LIGHTS" => LIGHTS}, ['./zombies', './zombies'])
+    $alarm_pid = spawn('ssh', 'dkordik@192.168.2.4', "afplay '/Users/dkordik/Documents/code/lights/alarm.mp3'")
   end
 
 end
