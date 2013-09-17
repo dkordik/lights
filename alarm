@@ -1,0 +1,14 @@
+#!/bin/bash
+ROOT="$(dirname $(realpath $0))"
+if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
+
+AUDIOPLAYER="afplay"
+
+if [ "X`which $AUDIOPLAYER`" == "X" ]; then
+	echo "Can't find audio player. Exiting."
+	exit 0
+fi
+
+while [ true ]; do
+	$AUDIOPLAYER $ROOT/alarm.mp3
+done

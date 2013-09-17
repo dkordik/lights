@@ -1,0 +1,19 @@
+#!/bin/bash
+ROOT="$(dirname $(realpath $0))"
+if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
+source "$ROOT/_common"
+
+function groupi {
+	for LIGHT in $LOCAL_LIGHTS
+	do
+		api "{ $1, \"hue\": 0, \"sat\": 255 }" $LIGHT
+	done
+}
+
+while [ true ]; do
+	groupi '"bri": 255, "transitiontime": 20'
+	sleep 2
+	groupi '"bri": 0, "transitiontime": 30'
+	sleep 3.5
+done
+
