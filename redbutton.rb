@@ -8,6 +8,8 @@ LIGHTS = "1 2 3 4 5 6"
 
 DreamCheeky::BigRedButton.run do
 
+  p "Started Big Red Button."
+
   def reset
     Process.kill("SIGKILL", $alarm_pid) if $alarm_pid
     Process.kill("SIGKILL", $zombie_pid) if $zombie_pid
