@@ -107,6 +107,7 @@ powermate.on('buttonDown', function () {
 		//super dark mode
 		darkPowermate = true;
 		runInOffice("sleepDisplay");
+		lights("OFFICE", { on: false });
 	}, 2000);
 });
 
