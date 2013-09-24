@@ -64,7 +64,7 @@ powermate._brightness = 10;
 powermate.setTrackedBrightness(powermate._brightness);
 
 getLatestLightStates(); //populate initial light states
-setInterval(getLatestLightStates, 15000);
+setInterval(getLatestLightStates, 6000);
 
 var lights = function (which, request) {
 	LIGHTS[which].ids.forEach(function (light) {
