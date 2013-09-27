@@ -9,7 +9,7 @@ while [ true ]; do
 	if [ "X$RUNNING" == "X" ]; then
 		echo "Knob service not found. Triggering restart"
 		echo "PS: $RUNNING"
-		# $ROOT/restart_knob
+		$ROOT/restart_knob
 	else
 		echo "Knob running. Sleeping 15."
 		echo "PS: $RUNNING"
