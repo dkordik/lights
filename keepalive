@@ -5,6 +5,7 @@ if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 LOGFILE="$ROOT/keepalive.log"
 
 function logline {
+	echo "" >> "$LOGFILE"
 	echo "$1" >> "$LOGFILE"
 }
 
@@ -12,11 +13,12 @@ function log {
 	printf "$1" >> "$LOGFILE"
 }
 
+logline "`date` -- Started Knob Keepalive service."
+
 while [ true ]; do
 	RUNNING=`ps ax | grep knob | grep -v grep | awk '{ printf $0 }'`
 	if [ "X$RUNNING" == "X" ]; then
-		logline
-		logline "`date` -- Knob service not found. Triggering restart!"
+		logline "`date` -- Knob service not found. Triggering knob service restart!"
 		$ROOT/restart_knob
 	else
 		log "."
