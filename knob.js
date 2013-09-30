@@ -91,12 +91,16 @@ var runInOffice = function (command, isGlobal) {
 	sys(fullCommand);
 }
 
+var run = function (command) {
+	sys(__dirname + "/" + command)
+}
+
 var darkPowermate = false;
 var buttonHoldTimeoutId;
 powermate.on('buttonDown', function () {
 	LIGHTS.LIVINGROOM.on = !LIGHTS.LIVINGROOM.on;
 	if (LIGHTS.LIVINGROOM.on) {
-		sys("./onWithSunTemp"); //re-use sun-temp logic
+		run("onWithSunTemp"); //re-use sun-temp logic
 	} else {
 		lights("LIVINGROOM", { on: LIGHTS.LIVINGROOM.on });
 		lights("KITCHEN", { on: LIGHTS.LIVINGROOM.on });
