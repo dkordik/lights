@@ -19,11 +19,12 @@ var lights = function (which, request) {
 	});	
 }
 
-var applescript = function (script) {
+var applescript = function (script, next) {
 	exec("osascript " + __dirname + "/" + script, function (error, stdout, stderr) {
 		if (stdout) { console.log('stdout: ' + stdout); }
 		if (stderr) { console.log('stderr: ' + stderr); }
 		if (error !== null) { console.log('exec error: ' + error); }
+		next();
 	});
 }
 
@@ -46,30 +47,30 @@ var LIGHTS = {
 	KITCHEN: { ids: [ 4, 5, 6 ], bri: 0 }
 }
 
-applescript("getItunesCover.applescript");
+applescript("getItunesCover.applescript", function () {
+	rb("getDominantCoverColors.rb", function (colors) {
 
-rb("getDominantCoverColors.rb", function (colors) {
+		colors = colors.filter(function (rgb) {
+			var max = 255;
+			var thresh = max / 2;
 
-	colors = colors.filter(function (rgb) {
-		var max = 255;
-		var thresh = max / 2;
+			atleastOneLight = rgb[0] > thresh || rgb[1] > thresh || rgb[2] > thresh;
+			atleastOneDark = rgb[0] < thresh || rgb[1] < thresh || rgb[2] < thresh;
 
-		atleastOneLight = rgb[0] > thresh || rgb[1] > thresh || rgb[2] > thresh;
-		atleastOneDark = rgb[0] < thresh || rgb[1] < thresh || rgb[2] < thresh;
+			return atleastOneLight && atleastOneDark;
+		});
 
-		return atleastOneLight && atleastOneDark;
+		var bestColor = colors[0]; //TODO: smarter bestColor picking
+
+		var rgb = { r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255 };
+
+		var color = colorConverter.rgbToXyBri(rgb);
+		var color = colorConverter.xyBriForModel(color, 'LCT001');
+
+		lights("OFFICE", {
+			bri: 180, //Math.round(color.bri * 255),
+			xy: [ color.x, color.y ]
+		});
+
 	});
-
-	var bestColor = colors[0]; //TODO: smarter bestColor picking
-
-	var rgb = { r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255 };
-
-	var color = colorConverter.rgbToXyBri(rgb);
-	var color = colorConverter.xyBriForModel(color, 'LCT001');
-
-	lights("OFFICE", {
-		bri: 180, //Math.round(color.bri * 255),
-		xy: [ color.x, color.y ]
-	});
-
 });
