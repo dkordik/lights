@@ -48,8 +48,7 @@ var rb = function (cmd, next) {
 
 var LIGHTS = {
 	OFFICE: { ids: [ 1, 3 ], on: true },
-	LIVINGROOM: { ids: [ 2 ], on: true, bri: 0 },
-	KITCHEN: { ids: [ 4, 5, 6 ], bri: 0 }
+	LIVINGROOM: { ids: [ 2, 4, 5, 6 ], on: true, bri: 0 }
 }
 
 var updateLightsToAlbum = function () {
@@ -78,6 +77,11 @@ var updateLightsToAlbum = function () {
 			var color = colorConverter.xyBriForModel(color, 'LCT001');
 
 			lights("OFFICE", {
+				bri: Math.round(color.bri * 255),
+				xy: [ color.x, color.y ]
+			});
+
+			lights("LIVINGROOM", {
 				bri: Math.round(color.bri * 255),
 				xy: [ color.x, color.y ]
 			});
