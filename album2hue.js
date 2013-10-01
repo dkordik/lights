@@ -33,9 +33,12 @@ var applescript = function (script, next) {
 var rb = function (cmd, next) {
 	exec(__dirname + "/" + cmd, function (error, stdout, stderr) {
 		if (stdout) { console.log('stdout: ' + stdout); }
-		next(JSON.parse(stdout));
 		if (stderr) { console.log('stderr: ' + stderr); }
-		if (error !== null) { console.log('exec error: ' + error); }
+		if (error === null) {
+			next(JSON.parse(stdout));
+		} else {
+			console.log('exec error: ' + error);
+		}
 	});
 }
 
