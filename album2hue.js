@@ -53,7 +53,7 @@ var updateLightsToAlbum = function () {
 	applescript("getItunesCover.applescript", function () {
 		rb("getDominantCoverColors.rb", function (colors) {
 
-			colors = colors.filter(function (rgb) {
+			interestingColors = colors.filter(function (rgb) {
 				var max = 255;
 				var thresh = max / 2;
 
@@ -63,7 +63,11 @@ var updateLightsToAlbum = function () {
 				return atleastOneLight && atleastOneDark;
 			});
 
-			var bestColor = colors[0]; //TODO: smarter bestColor picking
+			var bestColor = interestingColors[0]; //TODO: smarter bestColor picking
+
+			if (!bestColor) {
+				bestColor = colors[0];
+			}
 
 			var rgb = { r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255 };
 
