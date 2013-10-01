@@ -14,13 +14,17 @@ function get_now_time {
 }
 
 function get_time_val {
-	TIME=$1
+	declare -i OFFSET=0
+	if [ -n "$2" ]; then
+		OFFSET=$2*60
+	fi
 	SUPPORTS_J=`date -j 2>/dev/null`
 	if [ "X$SUPPORTS_J" == "X" ]; then
-		echo `date -d "$TIME" "+%H%M" | awk '{printf "%d", $1}'`
+		DATE=`date --date "@$(( $(date -d "$1" "+%s") + $OFFSET ))" "+%H%M"`
 	else
-		echo `date -j -f "%H:%M %p" "$TIME" "+%H%M" | awk '{printf "%d", $1}'`
+		DATE=`date -j -r $(( $(date -j -f "%H:%M %p" "$1" "+%s") + $OFFSET )) "+%H%M"`
 	fi
+	echo `echo "$DATE" | awk '{printf "%d", $1}'`
 }
 
 function get_temp_val {
@@ -31,6 +35,8 @@ function get_temp_val {
 
 echo `$ROOT/updateSunrise`
 
+MIN_AFTER_SUNSET_TIL_DARK=30
+
 DAY_TIME=`cat $ROOT/.cached_sunrise`
 NIGHT_TIME=`cat $ROOT/.cached_sunset`
 NOW_TIME=$(get_now_time)
@@ -39,9 +45,10 @@ declare -i DAY_VAL
 declare -i NIGHT_VAL
 declare -i NOW_VAL
 DAY_VAL=$(get_time_val "$DAY_TIME")
-NIGHT_VAL=$(get_time_val "$NIGHT_TIME")
+NIGHT_VAL=$(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
 NOW_VAL=$(get_time_val "$NOW_TIME")
-
+# echo SUNSET: $(get_time_val "$NIGHT_TIME")
+# echo ACTUAL DARK: $(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
 function api {
 	APIKEY="newdeveloper"
 	HUB_IP="192.168.2.142"

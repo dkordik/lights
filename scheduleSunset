@@ -5,12 +5,10 @@ source "$ROOT/_common"
 #make sure to run this to enable at daemon for the first time
 # sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist
 
-MINUTES_BEFORE_SUNSET_TO_START=15
-
 SUNSET=`cat "$ROOT/.cached_sunset"`
 HOUR_BEFORE_SUNSET=`echo $SUNSET | awk -F'[: ]' '{ print $1-1 ":" $2 " " $3  }'`
 declare -i AT_TIME_ADD
-AT_TIME_ADD=60-$MINUTES_BEFORE_SUNSET_TO_START
+AT_TIME_ADD=60+$MIN_AFTER_SUNSET_TIL_DARK
 
 JOB_QUEUE_NAME="L"
 PREVIOUS_JOBS=`atq -q $JOB_QUEUE_NAME | awk '{ printf $1 " " }'`
