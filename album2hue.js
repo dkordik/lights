@@ -71,13 +71,20 @@ var updateLightsToAlbum = function () {
 				return getLS(b) - getLS(a);
 			})[0];
 
-			console.log("best color: ", bestColor);
+			var luminosity, color;
 
-			var luminosity = Math.max(bestColor[0], bestColor[1], bestColor[2]);
-
-			var rgb = { r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255 };
-			var color = colorConverter.rgbToXyBri(rgb);
-			color = colorConverter.xyBriForModel(color, 'LCT001');
+			if (bestColor[0] == bestColor[1] && bestColor[1] == bestColor[2]) {
+				console.log("BLACK+WHITE=GOLD");
+				luminosity = 127;
+				color = { x: 0.5258, y: 0.4134 }; //GOLD
+			} else {
+				console.log("best color: ", bestColor);
+				color = colorConverter.rgbToXyBri({
+					r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255
+				});
+				color = colorConverter.xyBriForModel(color, 'LCT001');
+				luminosity = Math.max(bestColor[0], bestColor[1], bestColor[2]);
+			}
 
 			lights("OFFICE", {
 				bri: luminosity,
