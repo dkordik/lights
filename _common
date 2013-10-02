@@ -35,6 +35,10 @@ function get_temp_val {
 
 echo `$ROOT/updateSunrise`
 
+DAY_TEMP="5700"
+NIGHT_TEMP="2900"
+LATE_TEMP="2000"
+
 MIN_AFTER_SUNSET_TIL_DARK=30
 
 DAY_TIME=`cat $ROOT/.cached_sunrise`
