@@ -6,6 +6,9 @@ source "$ROOT/_common"
 if [ $NOW_VAL -gt $DAY_VAL -a $NOW_VAL -lt $NIGHT_VAL ]; then
 	CURRENT_TEMP=$DAY_TEMP
 	CURRENT_BRI="254"
+elif [ $NOW_VAL -lt $DAY_VAL ]; then
+	CURRENT_TEMP=$LATE_TEMP
+	CURRENT_BRI="100"
 else
 	CURRENT_TEMP=$NIGHT_TEMP
 	CURRENT_BRI="161"
@@ -15,5 +18,5 @@ TEMPVAL=$(get_temp_val $CURRENT_TEMP)
 
 for LIGHT in $LOCAL_LIGHTS
 do
-	api "{ \"ct\": $TEMPVAL, \"on\": true, \"bri\": $CURRENT_BRI }" $LIGHT
+	api "{ \"ct\": $TEMPVAL, \"on\": true, \"bri\": $CURRENT_BRI, \"transitiontime\": 60 }" $LIGHT
 done

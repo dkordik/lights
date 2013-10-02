@@ -41,12 +41,10 @@ DAY_TIME=`cat $ROOT/.cached_sunrise`
 NIGHT_TIME=`cat $ROOT/.cached_sunset`
 NOW_TIME=$(get_now_time)
 
-declare -i DAY_VAL
-declare -i NIGHT_VAL
-declare -i NOW_VAL
-DAY_VAL=$(get_time_val "$DAY_TIME")
-NIGHT_VAL=$(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
-NOW_VAL=$(get_time_val "$NOW_TIME")
+declare -i DAY_VAL=$(get_time_val "$DAY_TIME")
+declare -i NIGHT_VAL=$(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
+declare -i NOW_VAL=$(get_time_val "$NOW_TIME")
+
 # echo SUNSET: $(get_time_val "$NIGHT_TIME")
 # echo ACTUAL DARK: $(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
 function api {
