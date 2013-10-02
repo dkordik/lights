@@ -42,6 +42,18 @@ var rb = function (cmd, next) {
 	});
 }
 
+var getLS = function (rgb) {
+	var r = rgb[0], g = rgb[1], b = rgb[2];
+	var min = Math.min(r, g, b);
+	var l = Math.max(r, g, b); //luminosity
+	var s = (l - min) / l; //saturation
+	if ( l == 0 ) {
+		return 0;
+	} else {
+		return l + Math.round(s * 255);
+	}
+};
+
 // ----------------------------------------------------
 // SET HUE LIGHTS TO DOMINANT ITUNES COVER ART COLOR
 // ----------------------------------------------------
@@ -55,34 +67,25 @@ var updateLightsToAlbum = function () {
 	applescript("getItunesCover.applescript", function () {
 		rb("getDominantCoverColors.rb", function (colors) {
 
-			interestingColors = colors.filter(function (rgb) {
-				var max = 255;
-				var thresh = max / 2;
+			var bestColor = colors.sort(function (a, b) {
+				return getLS(b) - getLS(a);
+			})[0];
 
-				atleastOneLight = rgb[0] > thresh || rgb[1] > thresh || rgb[2] > thresh;
-				atleastOneDark = rgb[0] < thresh || rgb[1] < thresh || rgb[2] < thresh;
+			console.log("best color: ", bestColor);
 
-				return atleastOneLight && atleastOneDark;
-			});
-
-			var bestColor = interestingColors[0]; //TODO: smarter bestColor picking
-
-			if (!bestColor) {
-				bestColor = colors[0];
-			}
+			var luminosity = Math.max(bestColor[0], bestColor[1], bestColor[2]);
 
 			var rgb = { r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255 };
-
 			var color = colorConverter.rgbToXyBri(rgb);
-			var color = colorConverter.xyBriForModel(color, 'LCT001');
+			color = colorConverter.xyBriForModel(color, 'LCT001');
 
 			lights("OFFICE", {
-				bri: Math.round(color.bri * 255),
+				bri: luminosity,
 				xy: [ color.x, color.y ]
 			});
 
 			lights("LIVINGROOM", {
-				bri: Math.round(color.bri * 255),
+				bri: luminosity,
 				xy: [ color.x, color.y ]
 			});
 
