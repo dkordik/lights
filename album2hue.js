@@ -42,11 +42,17 @@ var rb = function (cmd, next) {
 	});
 }
 
+Array.prototype.min = function () {
+	return this.sort()[0];
+}
+
+Array.prototype.max = function () {
+	return this.sort().reverse()[0];
+}
+
 var getLS = function (rgb) {
-	var r = rgb[0], g = rgb[1], b = rgb[2];
-	var min = Math.min(r, g, b);
-	var l = Math.max(r, g, b); //luminosity
-	var s = (l - min) / l; //saturation
+	var l = rgb.max(); //luminosity
+	var s = (l - rgb.min()) / l; //saturation
 	if ( l == 0 ) {
 		return 0;
 	} else {
@@ -73,17 +79,18 @@ var updateLightsToAlbum = function () {
 
 			var luminosity, color;
 
-			if (bestColor[0] == bestColor[1] && bestColor[1] == bestColor[2]) {
+			if (bestColor.min() > (bestColor.max() - 5) ) {
 				console.log("BLACK+WHITE=GOLD");
 				luminosity = 127;
 				color = { x: 0.5258, y: 0.4134 }; //GOLD
 			} else {
 				console.log("best color: ", bestColor);
+				luminosity = bestColor.max();
 				color = colorConverter.rgbToXyBri({
 					r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255
 				});
 				color = colorConverter.xyBriForModel(color, 'LCT001');
-				luminosity = Math.max(bestColor[0], bestColor[1], bestColor[2]);
+
 			}
 
 			lights("OFFICE", {
