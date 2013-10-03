@@ -100,7 +100,7 @@ var buttonHoldTimeoutId;
 powermate.on('buttonDown', function () {
 	LIGHTS.LIVINGROOM.on = !LIGHTS.LIVINGROOM.on;
 	if (LIGHTS.LIVINGROOM.on) {
-		run("onWithSunTemp"); //re-use sun-temp logic
+		run("onWithSunTemp " + powermate._brightness); //re-use sun-temp logic
 	} else {
 		lights("LIVINGROOM", { on: LIGHTS.LIVINGROOM.on });
 		lights("KITCHEN", { on: LIGHTS.LIVINGROOM.on });
