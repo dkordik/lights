@@ -137,15 +137,15 @@ powermate.on('wheelTurn', function (wheelDelta) {
 		LIGHTS.LIVINGROOM.bri += (wheelDelta * 2);
 		if (LIGHTS.LIVINGROOM.bri > 255) {
 			LIGHTS.LIVINGROOM.bri = 255;
-		} else if (LIGHTS.LIVINGROOM.bri < 0) {
-			LIGHTS.LIVINGROOM.bri = 0;
+		} else if (LIGHTS.LIVINGROOM.bri < 1) {
+			LIGHTS.LIVINGROOM.bri = 1;
 		}
 		clearTimeout(turnThrottleId);
 		turnThrottleId = setTimeout(function () {
 			lights("LIVINGROOM", { bri: LIGHTS.LIVINGROOM.bri });
 			LIGHTS.KITCHEN.bri = LIGHTS.LIVINGROOM.bri - 75;
-			if (LIGHTS.KITCHEN.bri < 0) {
-				LIGHTS.KITCHEN.bri = 0;
+			if (LIGHTS.KITCHEN.bri < 1) {
+				LIGHTS.KITCHEN.bri = 1;
 			}
 			lights("KITCHEN", { bri: LIGHTS.KITCHEN.bri });
 		}, 100);
