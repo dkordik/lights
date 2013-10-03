@@ -102,8 +102,10 @@ powermate.on('buttonDown', function () {
 	if (LIGHTS.LIVINGROOM.on) {
 		run("onWithSunTemp " + powermate._brightness); //re-use sun-temp logic
 	} else {
-		lights("LIVINGROOM", { on: LIGHTS.LIVINGROOM.on });
-		lights("KITCHEN", { on: LIGHTS.LIVINGROOM.on });
+		getLatestLightStates(); 
+		powermate.setTrackedBrightness(LIGHTS.LIVINGROOM.bri);
+		lights("LIVINGROOM", { on: false });
+		lights("KITCHEN", { on: false });
 	}
 	powermate.setTrackedBrightness(100);
 	clearTimeout(buttonHoldTimeoutId);
