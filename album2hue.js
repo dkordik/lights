@@ -42,13 +42,13 @@ var rb = function (cmd, next) {
 	});
 }
 
-Array.prototype.min = function () {
-	return this.sort()[0];
-}
+Array.prototype.max = function() {
+  return Math.max.apply(null, this);
+};
 
-Array.prototype.max = function () {
-	return this.sort().reverse()[0];
-}
+Array.prototype.min = function() {
+  return Math.min.apply(null, this);
+};
 
 var getLS = function (rgb) {
 	var l = rgb.max(); //luminosity
