@@ -50,13 +50,13 @@ Array.prototype.min = function() {
   return Math.min.apply(null, this);
 };
 
-var getLS = function (rgb) {
-	var l = rgb.max(); //luminosity
-	var s = (l - rgb.min()) / l; //saturation
-	if ( l == 0 ) {
+var getLumSatValue = function (rgb) {
+	var luminosity = rgb.max();
+	var saturation = (luminosity - rgb.min()) / luminosity;
+	if ( luminosity == 0 ) {
 		return 0;
 	} else {
-		return l + Math.round(s * 255);
+		return luminosity + Math.round(saturation * 255);
 	}
 };
 
@@ -74,7 +74,7 @@ var updateLightsToAlbum = function () {
 		rb("getDominantCoverColors.rb", function (colors) {
 
 			var bestColor = colors.sort(function (a, b) {
-				return getLS(b) - getLS(a);
+				return getLumSatValue(b) - getLumSatValue(a);
 			})[0];
 
 			var luminosity, color;
