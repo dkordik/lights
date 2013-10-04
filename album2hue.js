@@ -13,14 +13,6 @@ var playback = require('playback');
 
 //the node.js community is amazing... so many great libraries made my job easy.
 
-var lights = function (which, request) {
-	LIGHTS[which].ids.forEach(function (light) {
-		api.setLightState(light, request, function (err, lights) {
-			if (err) { console.log("ERROR: ", err); }
-		});
-	});	
-}
-
 var applescript = function (script, next) {
 	exec("osascript " + __dirname + "/" + script, function (error, stdout, stderr) {
 		if (stdout) { console.log('stdout: ' + stdout); }
@@ -64,12 +56,37 @@ var getLumSatValue = function (rgb) {
 // SET HUE LIGHTS TO DOMINANT ITUNES COVER ART COLOR
 // ----------------------------------------------------
 
-var LIGHTS = {
-	OFFICE: { ids: [ 1, 3 ], on: true },
-	LIVINGROOM: { ids: [ 2, 4, 5, 6 ], on: true, bri: 0 }
+var currentlyNormalLights = true;
+var originalLightStates = {};
+
+api.getFullState(function (err, config) {
+	if (err) { throw err; }
+	originalLightStates = config.lights;
+});
+
+var restoreLights = function (doneCallback) {
+	for (lightNum in originalLightStates) {
+		var state = originalLightStates[lightNum].state;
+		api.setLightState(lightNum, {
+			bri: state.bri,
+			xy: state.xy
+		}, function(err, lights) {
+			if (err) { throw err; }
+			if (doneCallback && lightNum == Object.keys(originalLightStates).length) {
+				doneCallback();
+			}
+		});
+	}
 }
 
 var updateLightsToAlbum = function () {
+	if (currentlyNormalLights) {
+		api.getFullState(function (err, config) {
+			if (err) { throw err; }
+			originalLightStates = config.lights;
+		});
+		currentlyNormalLights = false;
+	}
 	applescript("getItunesCover.applescript", function () {
 		rb("getDominantCoverColors.rb", function (colors) {
 
@@ -90,24 +107,32 @@ var updateLightsToAlbum = function () {
 					r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255
 				});
 				color = colorConverter.xyBriForModel(color, 'LCT001');
-
 			}
 
-			lights("OFFICE", {
+			api.setGroupLightState(0, {
 				bri: luminosity,
 				xy: [ color.x, color.y ]
+			}, function (err, lights) {
+				if (err) { console.log("ERROR: ", err); }
 			});
-
-			lights("LIVINGROOM", {
-				bri: luminosity,
-				xy: [ color.x, color.y ]
-			});
-
 		});
 	});
 }
 
-playback.on('playing', function(data) {
+playback.on('playing', function (data) {
 	console.dir(data);
 	updateLightsToAlbum();
+});
+
+playback.on('paused', function (data) {
+	restoreLights();
+	currentlyNormalLights = true;
+});
+
+process.on('SIGINT', function () {
+	process.stdout.write("\nRestoring light settings... ");
+	restoreLights(function () {
+		process.stdout.write("Exiting.\n");
+		process.exit();
+	});
 });
