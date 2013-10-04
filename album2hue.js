@@ -60,7 +60,7 @@ var currentlyNormalLights = true;
 var originalLightStates = {};
 
 api.getFullState(function (err, config) {
-	if (err) { throw err; }
+	if (err) { console.log("ERROR: ", err); }
 	originalLightStates = config.lights;
 });
 
@@ -71,7 +71,7 @@ var restoreLights = function (doneCallback) {
 			bri: state.bri,
 			xy: state.xy
 		}, function(err, lights) {
-			if (err) { throw err; }
+			if (err) { console.log("ERROR: ", err); }
 			if (doneCallback && lightNum == Object.keys(originalLightStates).length) {
 				doneCallback();
 			}
@@ -82,7 +82,7 @@ var restoreLights = function (doneCallback) {
 var updateLightsToAlbum = function () {
 	if (currentlyNormalLights) {
 		api.getFullState(function (err, config) {
-			if (err) { throw err; }
+			if (err) { console.log("ERROR: ", err); }
 			originalLightStates = config.lights;
 		});
 		currentlyNormalLights = false;
