@@ -6,7 +6,7 @@ var scraper = require('scraper');
 var artist = process.argv[2];
 var album = process.argv[3];
 
-google("site:itunes.apple.com " + album + " by " + artist, function(err, next, links){
+google("site:itunes.apple.com inurl:album " + album + " by " + artist, function(err, next, links){
 	if (err) { console.error(err); exit(1); }
 	if (!links) {
 		console.error("No google results.");
