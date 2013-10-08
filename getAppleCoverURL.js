@@ -18,7 +18,7 @@ google("site:itunes.apple.com " + album + " by " + artist, function(err, next, l
 		var artworkEl = jQuery(".artwork[width=170]");
 		if (artworkEl.length != 0) {
 			var bigArtURL = artworkEl[0].src.replace("170x170", "1200x1200");
-			console.log("{ url: '" + bigArtURL + "' }");
+			console.log('{ "url": "' + bigArtURL + '" }');
 			exit(0);
 		} else {
 			console.error("No artwork found on Apple page with width of 170px");
