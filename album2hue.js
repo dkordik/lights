@@ -22,12 +22,14 @@ var applescript = function (script, next) {
 	});
 }
 
-var rb = function (cmd, next) {
+var sys = function (cmd, next) {
 	exec(__dirname + "/" + cmd, function (error, stdout, stderr) {
 		if (stdout) { console.log('stdout: ' + stdout); }
 		if (stderr) { console.log('stderr: ' + stderr); }
 		if (error === null) {
-			next(JSON.parse(stdout));
+			if (next) {
+				next(JSON.parse(stdout));
+			}
 		} else {
 			console.log('exec error: ' + error);
 		}
@@ -77,6 +79,7 @@ var restoreLights = function (doneCallback) {
 			}
 		});
 	}
+	currentlyNormalLights = true;
 }
 
 var updateLightsToAlbum = function () {
@@ -88,33 +91,20 @@ var updateLightsToAlbum = function () {
 		currentlyNormalLights = false;
 	}
 	applescript("getItunesCover.applescript", function () {
-		rb("getDominantCoverColors.rb", function (colors) {
+		sys("getDominantCoverColors.rb", function (colors) {
 
 			var bestColor = colors.sort(function (a, b) {
 				return getLumSatValue(b) - getLumSatValue(a);
 			})[0];
 
-			var luminosity, color;
-
 			if (bestColor.min() > (bestColor.max() - 5) ) {
 				console.log("BLACK+WHITE=GOLD");
-				luminosity = 127;
-				color = { x: 0.5258, y: 0.4134 }; //GOLD
+				bestColor = [243, 166, 63];
 			} else {
 				console.log("best color: ", bestColor);
-				luminosity = bestColor.max();
-				color = colorConverter.rgbToXyBri({
-					r: bestColor[0]/255, g: bestColor[1]/255, b: bestColor[2]/255
-				});
-				color = colorConverter.xyBriForModel(color, 'LCT001');
 			}
 
-			api.setGroupLightState(0, {
-				bri: luminosity,
-				xy: [ color.x, color.y ]
-			}, function (err, lights) {
-				if (err) { console.log("ERROR: ", err); }
-			});
+			sys("rgb2hue.js '[" + bestColor + "]'")
 		});
 	});
 }
@@ -126,7 +116,6 @@ playback.on('playing', function (data) {
 
 playback.on('paused', function (data) {
 	restoreLights();
-	currentlyNormalLights = true;
 });
 
 process.on('SIGINT', function () {
