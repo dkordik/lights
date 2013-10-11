@@ -22,8 +22,11 @@ var sys = function (cmd, next) {
 var downloadImage = function (uri, next) {
 	console.log("Grabbing image from " + uri + "...");
 	request.head(uri, function (err, res, body) {
-		request(uri).pipe(fs.createWriteStream(__dirname + "/.cover.png"));
-		if (next) { next(); }
+		var imageStream = fs.createWriteStream(__dirname + "/.cover.png");
+		imageStream.on("close", function () {
+			if (next) { next(); }
+		})
+		request(uri).pipe(imageStream);
 	});
 };
 
