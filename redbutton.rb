@@ -27,7 +27,7 @@ DreamCheeky::BigRedButton.run do
     reset
     $chromecast_pid = spawn("#{root}/chromecast.js", 'YouTube', '5A_CGkVO8cE')
     $zombie_pid = spawn({"LIGHTS" => LIGHTS}, ["#{root}/zombies", "#{root}/zombies"])
-    $alarm_pid = spawn('ssh', 'dkordik@192.168.2.4', "afplay '/Users/dkordik/Documents/code/lights/alarm.mp3'")
+    $alarm_pid = spawn('ssh', 'dkordik@192.168.2.4', "afplay '#{root}/alarm.mp3'")
   end
 
 end
