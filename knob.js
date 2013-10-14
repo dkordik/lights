@@ -42,13 +42,14 @@ var getGroupFromLight = function (lightNum) {
 var getLatestLightStates = function () {
 	api.getFullState(function (err, config) {
 		if (err) {
-			console.error(err);
-		};
-		for (lightNum in config.lights) {
-			var lightState = config.lights[lightNum].state;
-			group = getGroupFromLight(lightNum);
-			group.on = lightState.on;
-			group.bri = lightState.bri;
+			console.error(new Date() + " -- " + err);
+		} else {
+			for (lightNum in config.lights) {
+				var lightState = config.lights[lightNum].state;
+				group = getGroupFromLight(lightNum);
+				group.on = lightState.on;
+				group.bri = lightState.bri;
+			}
 		}
 	});
 	if (LIGHTS.LIVINGROOM.on) {
