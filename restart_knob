@@ -3,9 +3,9 @@ ROOT="$(dirname $(realpath $0))"
 if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 
 ps ax | grep knob.js | sed 's/^[ ]//g' | cut -d" " -f 1 | parallel --max-procs 1 sudo kill
-sudo $ROOT/knob.js >> $ROOT/knob.log &
+sudo $ROOT/knob.js >> $ROOT/knob.log 2>> $ROOT/knob.error.log &
 
 ps ax | grep redbutton.rb | sed 's/^[ ]//g' | cut -d" " -f 1 | parallel --max-procs 1 sudo kill
-sudo $ROOT/redbutton.rb  >> $ROOT/redbutton.log &
+sudo $ROOT/redbutton.rb  >> $ROOT/redbutton.log 2>> $ROOT/redbutton.error.log &
 
 exit 0

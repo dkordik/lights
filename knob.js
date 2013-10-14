@@ -41,7 +41,9 @@ var getGroupFromLight = function (lightNum) {
 
 var getLatestLightStates = function () {
 	api.getFullState(function (err, config) {
-		if (err) throw err;
+		if (err) {
+			console.error(err);
+		};
 		for (lightNum in config.lights) {
 			var lightState = config.lights[lightNum].state;
 			group = getGroupFromLight(lightNum);
@@ -77,7 +79,8 @@ var sys = function (command) {
 		if (stdout) { console.log('stdout: ' + stdout); }
 		if (stderr) { console.log('stderr: ' + stderr); }
 		if (error !== null) {
-			console.log('exec error: ' + error);
+			console.error('exec error: ' + error
+				+ "(attempted command -->"+ command + "<--)");
 		}
 	});
 }
