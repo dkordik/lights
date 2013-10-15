@@ -26,9 +26,13 @@ var color = colorConverter.rgbToXyBri({
 });
 color = colorConverter.xyBriForModel(color, 'LCT001');
 
-api.setGroupLightState(0, {
+var state = {
 	// bri: luminosity,
 	xy: [ color.x, color.y ]
-}, function (err, lights) {
+};
+
+var lightGroup = process.argv[3] | 0;
+
+api.setGroupLightState(lightGroup, state, function (err, lights) {
 	if (err) { console.error("ERROR: ", err); }
 });
