@@ -136,9 +136,9 @@ powermate.on('buttonUp', function () {
 var turnThrottleId;
 powermate.on('wheelTurn', function (wheelDelta) {
 	if (LIGHTS.LIVINGROOM.on == false) {
-		powermate.setTrackedBrightness(powermate._brightness + (wheelDelta * 2));
+		powermate.setTrackedBrightness(powermate._brightness + (wheelDelta * 4));
 	} else {
-		LIGHTS.LIVINGROOM.bri += (wheelDelta * 2);
+		LIGHTS.LIVINGROOM.bri += (wheelDelta * 4);
 		if (LIGHTS.LIVINGROOM.bri > 255) {
 			LIGHTS.LIVINGROOM.bri = 255;
 		} else if (LIGHTS.LIVINGROOM.bri < 1) {
