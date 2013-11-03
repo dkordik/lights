@@ -109,7 +109,7 @@ powermate.on('buttonDown', function () {
 		lights("LIVINGROOM", { on: false });
 		lights("KITCHEN", { on: false });
 	}
-	powermate.setTrackedBrightness(100);
+	powermate.setTrackedBrightness(50);
 	clearTimeout(buttonHoldTimeoutId);
 	buttonHoldTimeoutId = setTimeout(function () {
 		//super dark mode
