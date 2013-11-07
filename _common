@@ -49,6 +49,19 @@ declare -i DAY_VAL=$(get_time_val "$DAY_TIME")
 declare -i NIGHT_VAL=$(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
 declare -i NOW_VAL=$(get_time_val "$NOW_TIME")
 
+if [ $NOW_VAL -gt $DAY_VAL -a $NOW_VAL -lt $NIGHT_VAL ]; then
+	CURRENT_TEMP=$DAY_TEMP
+	CURRENT_BRI="254"
+elif [ $NOW_VAL -lt $DAY_VAL ]; then
+	CURRENT_TEMP=$LATE_TEMP
+	CURRENT_BRI="100"
+else
+	CURRENT_TEMP=$NIGHT_TEMP
+	CURRENT_BRI="161"
+fi
+
+TEMPVAL=$(get_temp_val $CURRENT_TEMP)
+
 # echo SUNSET: $(get_time_val "$NIGHT_TIME")
 # echo ACTUAL DARK: $(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
 APIKEY="newdeveloper"

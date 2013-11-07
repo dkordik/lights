@@ -3,23 +3,6 @@ ROOT="$(dirname $(realpath $0))"
 if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 source "$ROOT/_common"
 
-if [ $NOW_VAL -gt $DAY_VAL -a $NOW_VAL -lt $NIGHT_VAL ]; then
-	CURRENT_TEMP=$DAY_TEMP
-	CURRENT_BRI="254"
-elif [ $NOW_VAL -lt $DAY_VAL ]; then
-	CURRENT_TEMP=$LATE_TEMP
-	CURRENT_BRI="100"
-else
-	CURRENT_TEMP=$NIGHT_TEMP
-	CURRENT_BRI="161"
-fi
-
-if [ "X$1" != "X" ]; then
-	CURRENT_BRI="$1"
-fi
-
-TEMPVAL=$(get_temp_val $CURRENT_TEMP)
-
 for LIGHT in $LOCAL_LIGHTS
 do
 	api "{ \"ct\": $TEMPVAL, \"on\": true, \"bri\": $CURRENT_BRI, \"transitiontime\": 60 }" $LIGHT
