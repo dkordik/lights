@@ -1,0 +1,9 @@
+#!/bin/bash
+ROOT="$(dirname $(realpath $0))"
+if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
+source "$ROOT/_common"
+
+for LIGHT in $LOCAL_LIGHTS
+do
+	api '{ "bri": 1 }' $LIGHT
+done
