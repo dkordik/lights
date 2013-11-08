@@ -8,8 +8,10 @@ chromecast.on('device', function(device){
     v: process.argv[3] || "release-9e8c585405ea9a5cecd82885e8e35d28a16609c6"
   }).then(function(){
     console.log('Sent to TV!');
+    process.exit(0);
   }, function(err){
     console.error('Something Went Wrong: ', err);
+    process.exit(1);
   })
 
 });
