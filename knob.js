@@ -158,6 +158,11 @@ powermate.on('wheelTurn', function (wheelDelta) {
 	}
 });
 
+process.on('uncaughtException', function (err) {
+  console.error(err.stack);
+  console.log("Node NOT Exiting...");
+});
+
 
 
 
