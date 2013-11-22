@@ -3,6 +3,8 @@
 var util = require('util');
 var exec = require('child_process').exec;
 
+require('longjohn'); //long stack traces
+
 var HueApi = require("node-hue-api").HueApi;
 
 var hostname = "192.168.2.142";
