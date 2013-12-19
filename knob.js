@@ -17,6 +17,9 @@ settingsFile.split("\n").forEach(function (s) {
 var hostname = "192.168.2.142";
 var username = settings.LOCAL_ID || "newdeveloper";
 
+var HueApi = require("node-hue-api").HueApi;
+var api = new HueApi(hostname, username);
+
 var ThrottledHue = require('./throttled-hue.js');
 var hue = new ThrottledHue({
 	ip: hostname,
