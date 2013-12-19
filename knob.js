@@ -2,14 +2,20 @@
 
 var util = require('util');
 var exec = require('child_process').exec;
+var http = require('http');
 
 require('longjohn'); //long stack traces
 
-var HueApi = require("node-hue-api").HueApi;
-
 var hostname = "192.168.2.142";
 var username = "newdeveloper";
-var api = new HueApi(hostname, username);
+
+var ThrottledHue = require('./throttled-hue.js');
+var hue = new ThrottledHue({
+	ip: hostname,
+	key: username,
+	interval: 600,
+	throttled: false
+});
 
 var PowerMate = require('node-powermate');
 var powermate = new PowerMate();
@@ -71,12 +77,6 @@ powermate.setTrackedBrightness(powermate._brightness);
 getLatestLightStates(); //populate initial light states
 setInterval(getLatestLightStates, 6000);
 
-var lights = function (which, request) {
-	LIGHTS[which].ids.forEach(function (light) {
-		api.setLightState(light, request);
-	});	
-}
-
 var sys = function (command) {
 	exec(command, function (error, stdout, stderr) {
 		if (stdout) { console.log('stdout: ' + stdout); }
@@ -108,8 +108,7 @@ powermate.on('buttonDown', function () {
 	if (LIGHTS.LIVINGROOM.on) {
 		run("onWithSunTemp " + powermate._brightness); //re-use sun-temp logic
 	} else {
-		lights("LIVINGROOM", { on: false });
-		lights("KITCHEN", { on: false });
+		hue.group(1, { on: false });
 	}
 	powermate.setTrackedBrightness(50);
 	clearTimeout(buttonHoldTimeoutId);
@@ -117,7 +116,7 @@ powermate.on('buttonDown', function () {
 		//super dark mode
 		darkPowermate = true;
 		runInOffice("sleepDisplay");
-		lights("OFFICE", { on: false });
+		hue.group(2, { on: false });
 	}, 2000);
 });
 
@@ -129,7 +128,7 @@ powermate.on('buttonUp', function () {
 		if (LIGHTS.LIVINGROOM.on) {
 			powermate.setTrackedBrightness(0);
 		} else {
-			powermate.setTrackedBrightness(LIGHTS.LIVINGROOM.bri);
+			powermate.setTrackedBrightness(1);
 		}
 	}
 	clearTimeout(buttonHoldTimeoutId);
@@ -146,14 +145,15 @@ powermate.on('wheelTurn', function (wheelDelta) {
 		} else if (LIGHTS.LIVINGROOM.bri < 1) {
 			LIGHTS.LIVINGROOM.bri = 1;
 		}
+
 		clearTimeout(turnThrottleId);
 		turnThrottleId = setTimeout(function () {
-			lights("LIVINGROOM", { bri: LIGHTS.LIVINGROOM.bri });
+
 			LIGHTS.KITCHEN.bri = LIGHTS.LIVINGROOM.bri - 75;
 			if (LIGHTS.KITCHEN.bri < 1) {
 				LIGHTS.KITCHEN.bri = 1;
 			}
-			lights("KITCHEN", { bri: LIGHTS.KITCHEN.bri });
+			hue.group(1, { bri: LIGHTS.LIVINGROOM.bri });
 		}, 100);
 	}
 });
