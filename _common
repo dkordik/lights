@@ -67,6 +67,10 @@ TEMPVAL=$(get_temp_val $CURRENT_TEMP)
 APIKEY="newdeveloper"
 HUB_IP="192.168.2.142"
 
+if [ "X$LOCAL_ID" != "X" ]; then
+	API_KEY="$LOCAL_ID"
+fi
+
 function api {
 	JSON=$1
 	LIGHT=$2
