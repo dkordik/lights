@@ -3,11 +3,19 @@
 var util = require('util');
 var exec = require('child_process').exec;
 var http = require('http');
+var fs = require('fs');
 
 require('longjohn'); //long stack traces
 
+var settingsFile=fs.readFileSync("_localsettings", { encoding:"utf8" })
+var settings = {};
+settingsFile.split("\n").forEach(function (s) {
+	var kv = s.split("=");
+	settings[kv[0]] = kv[1] && kv[1].replace(/\"/g,'');
+})
+
 var hostname = "192.168.2.142";
-var username = "newdeveloper";
+var username = settings.LOCAL_ID || "newdeveloper";
 
 var ThrottledHue = require('./throttled-hue.js');
 var hue = new ThrottledHue({
