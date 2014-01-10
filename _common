@@ -64,7 +64,7 @@ TEMPVAL=$(get_temp_val $CURRENT_TEMP)
 
 # echo SUNSET: $(get_time_val "$NIGHT_TIME")
 # echo ACTUAL DARK: $(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
-APIKEY="newdeveloper"
+API_KEY="newdeveloper"
 HUB_IP="192.168.2.142"
 
 if [ "X$LOCAL_ID" != "X" ]; then
@@ -75,12 +75,12 @@ function api {
 	JSON=$1
 	LIGHT=$2
 
-	curl -X PUT -d"$JSON" http://$HUB_IP/api/$APIKEY/lights/$LIGHT/state
+	curl -X PUT -d"$JSON" http://$HUB_IP/api/$API_KEY/lights/$LIGHT/state
 }
 
 function group_api {
 	JSON=$1
 	GROUP=$2
 
-	curl -X PUT -d"$JSON" http://$HUB_IP/api/$APIKEY/groups/$GROUP/action
+	curl -X PUT -d"$JSON" http://$HUB_IP/api/$API_KEY/groups/$GROUP/action
 }
