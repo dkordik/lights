@@ -18,7 +18,7 @@ var scrapeBigArtwork = function (pageURL) {
 		var artworkEl = jQuery(".artwork[width=170]");
 
 		if (artworkEl.length != 0) {
-			var bigArtURL = artworkEl[0].src.replace("170x170", "1200x1200");
+			var bigArtURL = artworkEl.attr("src-swap-high-dpi").replace(/[0-9]{3}x[0-9]{3}/, "1200x1200");
 
 			console.log('{ "url": "' + bigArtURL + '" }');
 			process.exit(0);
