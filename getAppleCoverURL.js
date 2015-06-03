@@ -6,16 +6,19 @@ var artist = process.argv[2];
 var album = process.argv[3];
 
 var googleapis = require('googleapis');
-var scraper = require('scraper');
+var cheerio = require('cheerio');
+var request = require('request');
 
 var scrapeBigArtwork = function (pageURL) {
-	scraper(pageURL, function(err, jQuery) {
+
+	request(pageURL, function (err, resp, body) {
 		if (err) {
-			console.error(err);
+			console.error("ERROR:", err);
 			process.exit(1);
 		}
 
-		var artworkEl = jQuery(".artwork[width=170]");
+		var $ = cheerio.load(body);
+		var artworkEl = $(".artwork[width=170]");
 
 		if (artworkEl.length != 0) {
 			var bigArtURL = artworkEl.attr("src-swap-high-dpi").replace(/[0-9]{3}x[0-9]{3}/, "1200x1200");
