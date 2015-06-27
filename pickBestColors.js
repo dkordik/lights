@@ -26,12 +26,6 @@ if (arg1) {
 	process.exit(1);
 }
 
-var arg2 = process.argv[3];
-var requestingSecondary = false;
-if (arg2) {
-	requestingSecondary = true;
-}
-
 var colorsByLumSat = colors.sort(function (a, b) {
 	return getLumSatValue(b) - getLumSatValue(a);
 });
@@ -60,11 +54,7 @@ if (bestColor.min() > (bestColor.max() - 5) ) {
 	secondaryColor = [243, 166, 63];
 }
 
-if (requestingSecondary) {
-	console.log(secondaryColor);
-} else {
-	console.log(bestColor);
-}
+console.log(JSON.stringify([bestColor, secondaryColor]));
 
 // console.log(colorsByLumSat.map(function (rgb) {
 // 			return "\n<div style='background-color:rgb("+

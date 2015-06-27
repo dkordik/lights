@@ -40,15 +40,15 @@ if (!imageUrl) {
 	process.exit();
 }
 
-var lightGroup = process.argv[3] | 0;
-
-var ignoreLuminosityArg = !process.argv[4] ? "" : " 'true'";
-
 downloadImage(imageUrl, function () {
 	sys("getDominantCoverColors.rb", function (colors) {
-		sys("pickBestColor.js '" + JSON.stringify(colors) + "'", function (color) {
-			sys("rgb2hue.js '" + JSON.stringify(color)
-				+ "' '" + lightGroup + "'" + ignoreLuminosityArg);
+		// console.log("dominant colors:", colors.map(function (rgb) {
+		// 	return "\n<div style='background-color:rgb("+
+		// 			rgb[0]+","+rgb[1]+","+rgb[2]+
+		// 		")'></div>";
+		// }).join(""));
+		sys("pickBestColors.js '" + JSON.stringify(colors) + "'", function (output) {
+			console.log("colors:", output);
 		});
 	});
 });
