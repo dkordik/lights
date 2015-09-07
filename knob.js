@@ -7,18 +7,22 @@ var fs = require('fs');
 
 require('longjohn'); //long stack traces
 
-var settingsFile=fs.readFileSync("_localsettings", { encoding:"utf8" })
+var settingsFile = fs.readFileSync(
+	__dirname + "/_localsettings", { encoding:"utf8" }
+);
 var settings = {};
 settingsFile.split("\n").forEach(function (s) {
 	var kv = s.split("=");
 	settings[kv[0]] = kv[1] && kv[1].replace(/\"/g,'');
-})
+});
 
 var hostname = "192.168.2.142";
 var username = settings.LOCAL_ID || "newdeveloper";
 
+var localGroup = settings.LOCAL_GROUP || 1;
+
 var HueApi = require("node-hue-api").HueApi;
-var api = new HueApi(hostname, username);
+var api = new HueApi(hostname, username + "-sync");
 
 var ThrottledHue = require('./throttled-hue.js');
 var hue = new ThrottledHue({
@@ -32,6 +36,8 @@ var PowerMate = require('node-powermate');
 var powermate = new PowerMate();
 
 console.log("Started Hue Knob.");
+console.log("loaded settings...", settings);
+console.log("username:", username);
 
 var LIGHTS = {
 	OFFICE: {
@@ -63,7 +69,7 @@ var getLatestLightStates = function () {
 		if (err) {
 			console.error(new Date() + " -- " + err);
 		} else {
-			for (lightNum in config.lights) {
+			for (var lightNum in config.lights) {
 				var lightState = config.lights[lightNum].state;
 				group = getGroupFromLight(lightNum);
 				group.on = lightState.on;
@@ -76,12 +82,13 @@ var getLatestLightStates = function () {
 	}
 };
 
+
 powermate.setTrackedBrightness = function (val) {
 	if (val < 0) val = 0;
 	if (val > 255) val = 255;
 	powermate.setBrightness(val);
 	powermate._brightness = val;
-}
+};
 powermate._brightness = 10;
 powermate.setTrackedBrightness(powermate._brightness);
 
@@ -102,15 +109,15 @@ var sys = function (command) {
 var runInOffice = function (command, isGlobal) {
 	var OFFICE_ROOT = "/Users/dkordik/Documents/code/lights";
 	var fullCommand =
-		'ssh dkordik@192.168.2.4 "' 
+		'ssh dkordik@192.168.2.4 "'
 		+ (isGlobal ? command : OFFICE_ROOT + '/' + command)
 		+ '"';
 	sys(fullCommand);
-}
+};
 
 var run = function (command) {
 	sys(__dirname + "/" + command)
-}
+};
 
 var darkPowermate = false;
 var buttonHoldTimeoutId;
@@ -119,7 +126,7 @@ powermate.on('buttonDown', function () {
 	if (LIGHTS.LIVINGROOM.on) {
 		run("onWithSunTemp " + powermate._brightness); //re-use sun-temp logic
 	} else {
-		hue.group(1, { on: false });
+		hue.group(localGroup, { on: false });
 	}
 	powermate.setTrackedBrightness(50);
 	clearTimeout(buttonHoldTimeoutId);
@@ -163,19 +170,14 @@ powermate.on('wheelTurn', function (wheelDelta) {
 			LIGHTS.KITCHEN.bri = LIGHTS.LIVINGROOM.bri - 75;
 			if (LIGHTS.KITCHEN.bri < 1) {
 				LIGHTS.KITCHEN.bri = 1;
-			}
-			hue.group(1, { bri: LIGHTS.LIVINGROOM.bri });
+			};
+			hue.group(localGroup, { bri: LIGHTS.LIVINGROOM.bri });
 		}, 100);
 	}
 });
 
 process.on('uncaughtException', function (err) {
   console.error(err.stack);
-  console.log("Node NOT Exiting...");
+  console.log("Uncaught exception... CRASH!");
+  process.exit(1);
 });
-
-
-
-
-
-

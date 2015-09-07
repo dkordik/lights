@@ -1,3 +1,2 @@
-.cached_*
-_lightgroup
-.config.json
+node_modules
+.cached*
