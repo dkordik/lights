@@ -4,6 +4,10 @@ if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 
 . "$ROOT/_localsettings"
 
+if [ "X$?" == "X1" ]; then
+	echo "NO _localsettings FOUND!!"
+fi
+
 if [ "X$LIGHTS" != "X" ]; then
 	LOCAL_LIGHTS="$LIGHTS"
 fi
