@@ -2,28 +2,33 @@
 ROOT="$(dirname $(realpath $0))"
 if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
 
-source "$ROOT/_localsettings"
+. "$ROOT/_localsettings"
 
 if [ "X$LIGHTS" != "X" ]; then
 	LOCAL_LIGHTS="$LIGHTS"
 fi
 
 function get_now_time {
-	DATE=$(date +%r | sed 's/^[ ]//g') #trim whitespace to support diff vers of date cmd
-	echo $(echo $DATE | cut -d ":" -f 1,2) $(echo $DATE | cut -d " " -f 2)
+	#get current time in HM for comparison to sunset/sunrise
+	DATE=$(date +%s | sed 's/^[ ]//g') #trim whitespace to support diff vers of date cmd
+	echo $DATE
 }
 
 function get_time_val {
+	#convert timestamp to HM time to compare current hour/min
 	declare -i OFFSET=0
 	if [ -n "$2" ]; then
-		OFFSET=$2*60
+	  OFFSET=$2
 	fi
+
 	SUPPORTS_J=`date -j 2>/dev/null`
-	if [ "X$SUPPORTS_J" == "X" ]; then
-		DATE=`date --date "@$(( $(date -d "$1" "+%s") + $OFFSET ))" "+%H%M"`
+	if [ "X$SUPPORTS_J" != "X" ]; then
+		DATE=`date -j -r "$1" "+%H%M"`
+		DATE=`expr $DATE + $OFFSET`
 	else
-		DATE=`date -j -r $(( $(date -j -f "%H:%M %p" "$1" "+%s") + $OFFSET )) "+%H%M"`
+		DATE=`date --date "@$(( $(date -d "$1" "+%s") + $OFFSET ))" "+%H%M"`
 	fi
+
 	echo `echo "$DATE" | awk '{printf "%d", $1}'`
 }
 
@@ -41,29 +46,36 @@ LATE_TEMP="2000"
 
 MIN_AFTER_SUNSET_TIL_DARK=30
 
-DAY_TIME=`cat $ROOT/.cached_sunrise`
-NIGHT_TIME=`cat $ROOT/.cached_sunset`
+SUNRISE=`cat $ROOT/.cached_sunrise`
+SUNSET=`cat $ROOT/.cached_sunset`
 NOW_TIME=$(get_now_time)
+LATE_TIME="2330" #11:30, late night mode
 
-declare -i DAY_VAL=$(get_time_val "$DAY_TIME")
-declare -i NIGHT_VAL=$(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
-declare -i NOW_VAL=$(get_time_val "$NOW_TIME")
+declare -i SUNRISE_VAL=$(get_time_val $SUNRISE)
+declare -i SUNSET_VAL=$(get_time_val $SUNSET $MIN_AFTER_SUNSET_TIL_DARK)
+declare -i NOW_VAL=$(get_time_val $NOW_TIME)
+declare -i LATE_VAL=$LATE_TIME
 
-if [ $NOW_VAL -gt $DAY_VAL -a $NOW_VAL -lt $NIGHT_VAL ]; then
-	CURRENT_TEMP=$DAY_TEMP
-	CURRENT_BRI="254"
-elif [ $NOW_VAL -lt $DAY_VAL ]; then
+echo "SUNRISE: $SUNRISE_VAL, TRUE SUNSET: $SUNSET_VAL, LATE: $LATE_VAL, NOW: $NOW_VAL"
+
+# if it's later than late val or the next day and pre-sunrise...
+if [ $NOW_VAL -gt $LATE_VAL -o $NOW_VAL -lt $SUNRISE_VAL ]; then
 	CURRENT_TEMP=$LATE_TEMP
 	CURRENT_BRI="100"
-else
+	echo "it's super late! settings brightness to late night mode."
+# else, if it's after sunset
+elif [ $NOW_VAL -gt $SUNSET_VAL ]; then
 	CURRENT_TEMP=$NIGHT_TEMP
 	CURRENT_BRI="161"
+	echo "it's night! settings brightness to nighttime."
+else
+	CURRENT_TEMP=$DAY_TEMP
+	CURRENT_BRI="254"
+	echo "it's day! settings brightness to daytime."
 fi
 
 TEMPVAL=$(get_temp_val $CURRENT_TEMP)
 
-# echo SUNSET: $(get_time_val "$NIGHT_TIME")
-# echo ACTUAL DARK: $(get_time_val "$NIGHT_TIME" "$MIN_AFTER_SUNSET_TIL_DARK")
 API_KEY="newdeveloper"
 HUB_IP="192.168.2.142"
 

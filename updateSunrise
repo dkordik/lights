@@ -16,11 +16,20 @@ if [ "X$TODAY" == "X$SUNRISE_LAST_MODIFIED" ]; then
 	exit 0
 fi
 
-URL='http://weather.yahooapis.com/forecastrss?w='
-l=2379574 # chicago
+. "$ROOT/.credentials"
 
-echo "Grabbing sunrise info from Yahoo Weather API..."
-export $(curl -s "$URL$l" | perl -ne'while(/(sunrise|sunset)="(.*?)"/g) { print "$1=$2\n" }')
+URL_BASE="http://api.openweathermap.org/data/2.5/weather"
+LOCATION="Chicago"
+URL="${URL_BASE}?q=${LOCATION}&appid=${OPENWEATHERMAP_KEY}"
 
-echo "$sunrise AM" > "$ROOT/.cached_sunrise"
-echo "$sunset PM" > "$ROOT/.cached_sunset"
+echo "Grabbing sunrise info from OpenWeatherMap API..."
+export $(
+	curl -s "$URL" |
+	perl -ne'
+	while(/"(sunrise|sunset)":([0-9]+)/g) {
+		print "$1=$2\n"
+	}'
+)
+
+echo "$sunrise" > "$ROOT/.cached_sunrise"
+echo "$sunset" > "$ROOT/.cached_sunset"
