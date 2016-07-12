@@ -27,11 +27,12 @@ function get_time_val {
 
 	SUPPORTS_J=`date -j 2>/dev/null`
 	if [ "X$SUPPORTS_J" != "X" ]; then
-		DATE=`date -j -r "$1" "+%H%M"`
-		DATE=`expr $DATE + $OFFSET`
+		DATE=`date -j -r "$1" "+%H%M"` #macOS
 	else
-		DATE=`date --date "@$(( $(date -d "$1" "+%s") + $OFFSET ))" "+%H%M"`
+		DATE=`date -d "@$1" "+%H%M"` #Raspian
 	fi
+
+	DATE=`expr $DATE + $OFFSET`
 
 	echo `echo "$DATE" | awk '{printf "%d", $1}'`
 }
