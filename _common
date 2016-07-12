@@ -65,7 +65,7 @@ echo "SUNRISE: $SUNRISE_VAL, TRUE SUNSET: $SUNSET_VAL, LATE: $LATE_VAL, NOW: $NO
 # if it's later than late val or the next day and pre-sunrise...
 if [ $NOW_VAL -gt $LATE_VAL -o $NOW_VAL -lt $SUNRISE_VAL ]; then
 	CURRENT_TEMP=$LATE_TEMP
-	CURRENT_BRI="100"
+	CURRENT_BRI="50"
 	echo "it's super late! settings brightness to late night mode."
 # else, if it's after sunset
 elif [ $NOW_VAL -gt $SUNSET_VAL ]; then
