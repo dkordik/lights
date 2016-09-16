@@ -75,7 +75,7 @@ elif [ $NOW_VAL -gt $SUNSET_VAL ]; then
 	echo "it's night! settings brightness to nighttime."
 else
 	CURRENT_TEMP=$DAY_TEMP
-	CURRENT_BRI="254"
+	CURRENT_BRI="150"
 	echo "it's day! settings brightness to daytime."
 fi
 
