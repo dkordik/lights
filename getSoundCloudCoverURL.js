@@ -10,7 +10,7 @@ var cheerio = require('cheerio');
 var request = require('request');
 
 var tryResolution = (baseUrl, resolution) => {
-	let url = baseUrl.replace(/[0-9]{3}x[0-9]{3}/, resolution);
+	let url = baseUrl.replace('t500x500', resolution);
 
 	return new Promise((resolve, reject) => {
 		request({ url: url, method: 'HEAD' }).on('response', (resp) => {
@@ -27,45 +27,24 @@ var tryResolution = (baseUrl, resolution) => {
 }
 
 var getBestResolution = (baseUrl) => {
-	return tryResolution(baseUrl, '1200x1200')
-		.catch(() => tryResolution(baseUrl, '600x600'))
+	return tryResolution(baseUrl, 'original')
+		.catch(() => tryResolution(baseUrl, 't500x500'))
 		.catch(() => {
 			throw new Error("Found matching thumbnail, but couldn't find any working high resolution images.");
 		});
-};
-
-var scrapeBigArtwork = (pageURL) => {
-	request(pageURL, (err, resp, body) => {
-		if (err) {
-			throw new Error(err);
-		}
-
-		var $ = cheerio.load(body);
-		var artworkEl = $(".artwork[width=170]");
-
-		if (artworkEl.length != 0) {
-			let baseUrl = artworkEl.attr("src-swap-high-dpi");
-			getBestResolution(baseUrl).then((bestResolutionUrl) => {
-				console.log('{ "url": "' + bestResolutionUrl + '" }');
-				process.exit(0);
-			}).catch(() => {
-				throw new Error("No images found from baseUrl: " + baseUrl);
-			});
-		} else {
-			throw new Error("No matching artwork found on Apple page");
-		}
-	});
 };
 
 googleapis.discover('customsearch', 'v1').execute((err, client) => {
 	if (err) console.error("GoogleAPIs:customsearch:v1 ERROR:", err);
 	if (!client) console.error("GoogleAPIs:customsearch:v1 couldn't get client");
 
-	var query = album + ' by ' + artist + ' inurl:album';
+	var query = 'inurl:i1.sndcdn.com/artworks ' + album + ' ' + artist;
+
 	var request = client.customsearch.cse.list({
 		q: query,
-		cx: config.itunesArtSearch.SEARCH_ENGINE_ID
-	}).withApiKey(config.itunesArtSearch.API_KEY);
+		cx: config.soundcloudArtSearch.SEARCH_ENGINE_ID,
+		searchType: 'image'
+	}).withApiKey(config.soundcloudArtSearch.API_KEY);
 
 	request.execute((err, response) => {
 		if (err) {
@@ -73,9 +52,12 @@ googleapis.discover('customsearch', 'v1').execute((err, client) => {
 		} else if (!response.items || response.items.length == 0) {
 			throw new Error("No google results for query: " + query);
 		} else {
-			var albumPageURL = response.items[0].link;
+			var imageUrl = response.items[0].link;
 
-			scrapeBigArtwork(albumPageURL);
+			getBestResolution(imageUrl).then((bestResolutionUrl) => {
+				console.log('{ "url": "' + bestResolutionUrl + '" }');
+				process.exit(0);
+			});
 		}
 	});
 });
