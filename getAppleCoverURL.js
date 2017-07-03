@@ -9,9 +9,7 @@ var googleapis = require('googleapis');
 var cheerio = require('cheerio');
 var request = require('request');
 
-var tryResolution = (baseUrl, resolution) => {
-	let url = baseUrl.replace(/[0-9]{3}x[0-9]{3}/, resolution);
-
+var _tryUrl = (url) => {
 	return new Promise((resolve, reject) => {
 		request({ url: url, method: 'HEAD' }).on('response', (resp) => {
 			let code = resp.statusCode;
@@ -24,36 +22,26 @@ var tryResolution = (baseUrl, resolution) => {
 			}
 		});
 	});
-}
-
-var getBestResolution = (baseUrl) => {
-	return tryResolution(baseUrl, '1200x1200')
-		.catch(() => tryResolution(baseUrl, '600x600'))
-		.catch(() => {
-			throw new Error("Found matching thumbnail, but couldn't find any working high resolution images.");
-		});
 };
 
-var scrapeBigArtwork = (pageURL) => {
+var logArtworkUrl = (pageURL) => {
 	request(pageURL, (err, resp, body) => {
 		if (err) {
 			throw new Error(err);
 		}
 
 		var $ = cheerio.load(body);
-		var artworkEl = $(".artwork[width=170]");
+		var srcSet = $("picture.product-artwork source").attr("srcset");
+		var lowResImageUrl = srcSet.split(" ")[0];
+		var imageUrlBase = lowResImageUrl.substring(0, lowResImageUrl.lastIndexOf("/"));
 
-		if (artworkEl.length != 0) {
-			let baseUrl = artworkEl.attr("src-swap-high-dpi");
-			getBestResolution(baseUrl).then((bestResolutionUrl) => {
-				console.log('{ "url": "' + bestResolutionUrl + '" }');
+		_tryUrl(imageUrlBase + '/1500x0w.png')
+			.catch(() => _tryUrl(imageUrlBase + '/1500x0w.jpg'))
+			.catch(() => { throw new Error("No working images found from Apple page."); })
+			.then((url) => {
+				console.log('{ "url": "' + url + '" }');
 				process.exit(0);
-			}).catch(() => {
-				throw new Error("No images found from baseUrl: " + baseUrl);
 			});
-		} else {
-			throw new Error("No matching artwork found on Apple page");
-		}
 	});
 };
 
@@ -74,8 +62,7 @@ googleapis.discover('customsearch', 'v1').execute((err, client) => {
 			throw new Error("No google results for query: " + query);
 		} else {
 			var albumPageURL = response.items[0].link;
-
-			scrapeBigArtwork(albumPageURL);
+			logArtworkUrl(albumPageURL);
 		}
 	});
 });
