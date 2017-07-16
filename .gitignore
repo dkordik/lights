@@ -2,3 +2,4 @@ node_modules
 .credentials
 _localsettings
 .cached*
+.config.json

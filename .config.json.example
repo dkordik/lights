@@ -1,0 +1,14 @@
+{
+	"itunesArtSearch": {
+		"API_KEY": "YOUR GOOGLE CUSTOM SEARCH API KEY HERE",
+		"SEARCH_ENGINE_ID": "YOUR GOOGLE CUSTOM SEARCH ID HERE"
+	},
+	"soundcloudArtSearch": {
+		"API_KEY": "YOUR GOOGLE CUSTOM SEARCH API KEY HERE",
+		"SEARCH_ENGINE_ID": "YOUR GOOGLE CUSTOM SEARCH ID HERE"
+	},
+	"speakers2lights": {
+		"Computer": "2",
+		"XBMC (htpc)": "1"
+	}
+}
