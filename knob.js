@@ -41,7 +41,7 @@ console.log("username:", username);
 
 var LIGHTS = {
 	OFFICE: {
-		ids: [ 1, 3 ],
+		ids: [ 8, 9 ],
 		on: true
 	},
 	LIVINGROOM: {
@@ -134,7 +134,7 @@ powermate.on('buttonDown', function () {
 		//super dark mode
 		darkPowermate = true;
 		runInOffice("sleepDisplay");
-		hue.group(2, { on: false });
+		hue.group(4, { on: false });
 	}, 2000);
 });
 

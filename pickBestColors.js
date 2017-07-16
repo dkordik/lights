@@ -26,7 +26,7 @@ if (arg1) {
 	process.exit(1);
 }
 
-var colorsByLumSat = colors.sort(function (a, b) {
+var colorsByLumSat = colors.slice(0).sort(function (a, b) {
 	return getLumSatValue(b) - getLumSatValue(a);
 });
 
@@ -40,26 +40,35 @@ var whatColorAmI = function (rgb) {
 	return RGB[index];
 }
 
-var bestColor = colorsByLumSat[0];
+var bestColor = colors[0]; //colorsByLumSat[0];
 var secondaryColor = colorsByLumSat.filter(function (color) {
 	//filter to next best color that's different
 	return whatColorAmI(color) != whatColorAmI(bestColor);
-})[0];
+})[0] || bestColor; //fallback to bestColor if everything filtered out
 
-if (bestColor.min() > (bestColor.max() - 5) ) {
-	//if the best color is still pretty gray
-	//just output GOLD
+if (bestColor.min() > (bestColor.max() - 5) &&
+	(secondaryColor.min() > (secondaryColor.max() - 5))) {
+	//if the best color and secondary color are both gray
+	//just output GOLD. if only one is gray,
+	//lets leave it to contrast with the other color
 
 	bestColor = [243, 166, 63];
 	secondaryColor = [243, 166, 63];
 }
 
-console.log(JSON.stringify([bestColor, secondaryColor]));
+var renderColor = function (rgb) {
+	return "\n<div style='background-color:rgb("+
+		rgb[0]+","+rgb[1]+","+rgb[2]+
+	")'>"+
+	whatColorAmI(rgb)+
+	"</div>";
+}
 
-// console.log(colorsByLumSat.map(function (rgb) {
-// 			return "\n<div style='background-color:rgb("+
-// 					rgb[0]+","+rgb[1]+","+rgb[2]+
-// 				")'>"+
-// 				whatColorAmI(rgb)+
-// 				"</div>";
+console.log(JSON.stringify([bestColor, secondaryColor]));
+//TODO write colors to file and auto reload file in browser
+
+// console.log(renderColor(bestColor))
+// console.log(renderColor(secondaryColor))
+// console.log(colors.map(function (rgb) {
+// 			return renderColor(rgb);
 // 		}).join(""));
