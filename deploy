@@ -1,0 +1,10 @@
+#!/bin/bash
+
+HOSTS="pi1 pi2"
+
+for HOST in $HOSTS
+do
+	echo "DEPLOYING TO $HOST..."
+	ssh -f $HOST "cd code/lights; git pull; ./restart_knob &"
+	echo "Deployed to $HOST."
+done
