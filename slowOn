@@ -1,0 +1,14 @@
+#!/bin/bash
+ROOT="$(dirname $(realpath $0))"
+if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
+source "$ROOT/_common"
+
+SECONDS=300
+declare -i TIME
+TIME=$SECONDS*10
+
+for LIGHT in $LOCAL_LIGHTS
+do
+	api "{ \"on\": true, \"transitiontime\": $TIME }" $LIGHT
+done
+

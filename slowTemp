@@ -1,0 +1,16 @@
+#!/bin/bash
+ROOT="$(dirname $(realpath $0))"
+if [ "X$ROOT" == "X" ]; then ROOT="$(dirname $0)"; fi
+source "$ROOT/_common"
+
+function setTemp {
+	SECONDS=$2
+	declare -i TEMP
+	TEMP=1000000/$3
+	declare -i TIME
+	TIME=$SECONDS*10
+	echo TIME:$TIME
+	api "{ \"ct\": $TEMP, \"transitiontime\": $TIME }" $1
+}
+
+setTemp $1 $2 $3
