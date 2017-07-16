@@ -1,0 +1,11 @@
+#!/bin/bash
+
+HOSTS="pi1 pi2"
+
+for HOST in $HOSTS
+do
+	echo "STAGING TO $HOST..."
+	scp knob.js pi@$HOST:~/code/lights
+	ssh -f $HOST "cd code/lights; ./restart_knob &"
+	echo "Staged to $HOST."
+done
