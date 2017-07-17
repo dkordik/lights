@@ -20,6 +20,7 @@
     "cheerio": "^0.19.0",
     "googleapis": "^0.4.5",
     "node-hue-api": "^2.4.2",
+    "node-powermate": "0.0.5",
     "request": "^2.75.0"
   }
 }

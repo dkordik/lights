@@ -5,7 +5,7 @@ let util = require('util'),
 	http = require('http'),
 	fs = require('fs'),
 
-	PowerMate = require('../node-powermate');
+	PowerMate = require('node-powermate');
 
 //the main
 
