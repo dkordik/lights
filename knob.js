@@ -134,7 +134,8 @@ powermate.on('buttonDown', function () {
 		//super dark mode
 		darkPowermate = true;
 		runInOffice("sleepDisplay");
-		hue.group(4, { on: false });
+		hue.group(0, { on: false }); //all
+		hue.group(4, { on: false }); //office specifically, for some reason?
 	}, 2000);
 });
 
