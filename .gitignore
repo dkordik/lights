@@ -1,5 +1,6 @@
 node_modules
 .credentials
 _localsettings
+_hub_IP
 .cached*
 .config.json

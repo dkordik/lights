@@ -16,7 +16,7 @@ settingsFile.split("\n").forEach(function (s) {
 	settings[kv[0]] = kv[1] && kv[1].replace(/\"/g,'');
 });
 
-var hostname = "192.168.2.142";
+var hostname = require('./readHubIp')();
 var username = settings.LOCAL_ID || "newdeveloper";
 
 var localGroup = settings.LOCAL_GROUP || 1;

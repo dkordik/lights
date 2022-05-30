@@ -2,7 +2,7 @@
 
 var exec = require('child_process').exec;
 
-var hostname = "192.168.2.142";
+var hostname = require('./readHubIp')();
 var username = "newdeveloper";
 var HueApi = require("node-hue-api").HueApi;
 var api = new HueApi(hostname, username);
