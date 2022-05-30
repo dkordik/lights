@@ -31,7 +31,7 @@ var logArtworkUrl = (pageURL) => {
 		}
 
 		var $ = cheerio.load(body);
-		var srcSet = $("picture.product-artwork source").attr("srcset");
+		var srcSet = $("[srcset]").attr("srcset");
 		var lowResImageUrl = srcSet.split(" ")[0];
 		var imageUrlBase = lowResImageUrl.substring(0, lowResImageUrl.lastIndexOf("/"));
 
