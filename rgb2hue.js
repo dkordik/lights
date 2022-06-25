@@ -1,11 +1,28 @@
 #!/usr/bin/env node
 
-var hostname = require('./readHubIp')();
-var username = "newdeveloper";
-var HueApi = require("node-hue-api").HueApi;
-var api = new HueApi(hostname, username);
+var HOSTNAME = require('./readHubIp')();
+var USERNAME = "newdeveloper";
+
+const setGroupLightState = ({ groupId, state }) => {
+  // return require("node-hue-api").discovery.nupnpSearch()
+  //   .then((searchResults) => {
+  //     const host = searchResults[0].ipaddress;
+  //     console.log('found hub dynamically, nice.', host);
+  const host = HOSTNAME;
+  return require("node-hue-api").v3.api.createLocal(host).connect(USERNAME)
+    // })
+    .then((api) => {
+      return api.groups.setGroupState(groupId, state);
+    })
+    .then((result) => {
+      console.log(`Light state change was successful? ${result}`);
+    })
+};
+
 
 var rgbArg = process.argv[2];
+var lightGroup = process.argv[3] || 0;
+
 if (rgbArg) {
 	// console.log("RGB2HUE, saw: ", rgbArg);
 	rgb = JSON.parse(rgbArg);
@@ -19,6 +36,7 @@ Array.prototype.max = function() {
 };
 
 var luminosity = rgb.max();
+console.log('rgb', rgb);
 
 function toXY([ r, g, b ]) {
     //Gamma correctie
@@ -62,13 +80,11 @@ var state = {
 	xy: [ color.x, color.y ]
 };
 
-var lightGroup = process.argv[3] | 0;
-
 var ignoreLuminosityArg = process.argv[4];
 if (!ignoreLuminosityArg) {
-	state.bri = luminosity;
+	state.bri = luminosity || 1;
 }
-
-api.setGroupLightState(lightGroup, state, function (err, lights) {
-	if (err) { console.error("ERROR: ", err); }
+console.log('setting light group state', lightGroup, state);
+setGroupLightState({ groupId: lightGroup, state }).catch((err) => {
+	console.error("ERROR: ", err);
 });

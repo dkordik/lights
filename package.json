@@ -18,8 +18,9 @@
   "homepage": "https://github.com/dkordik/lights#readme",
   "dependencies": {
     "cheerio": "^0.19.0",
+    "chromecast-player": "^0.2.3",
     "googleapis": "^0.4.5",
-    "node-hue-api": "^2.4.2",
+    "node-hue-api": "^5.0.0-beta.13",
     "node-powermate": "0.0.5",
     "request": "^2.75.0",
     "superagent": "^3.5.2"
